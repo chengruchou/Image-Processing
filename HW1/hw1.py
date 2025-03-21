@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
 def histogram_equalization(channel):
     # 計算直方圖：計算 0~255 的像素出現次數
@@ -19,10 +20,10 @@ def histogram_equalization(channel):
     return equalized
 
 def main():
-    # 讀取輸入圖片，請確保 input.png 與程式在同一資料夾中
+    # 讀取輸入圖片，請確保 HW1/input.jpg 存在
     img = cv2.imread('HW1/input.jpg')
     if img is None:
-        print("Error: 'input.png' not found.")
+        print("Error: 'HW1/input.jpg' not found.")
         return
 
     # 轉換 BGR 至 HSV 色彩空間，分離出 H, S, V 三個通道
@@ -37,8 +38,13 @@ def main():
         h.flatten(), s.flatten(), bins=[180, 256], range=[[0, 180], [0, 256]]
     )
     
+    # 定義自訂色帶：黑、紅、橘、黃、白
+    colors = ["black", "red", "orange", "yellow", "white"]
+    custom_cmap = mcolors.LinearSegmentedColormap.from_list("custom_cmap", colors)
+    
     plt.figure(figsize=(6, 6))
-    plt.imshow(hist2d.T, origin='lower', aspect='auto', extent=[0, 180, 0, 256])
+    plt.imshow(hist2d.T, origin='lower', aspect='auto', extent=[0, 180, 0, 256],
+               cmap=custom_cmap)
     plt.xlabel('Hue')
     plt.ylabel('Saturation')
     plt.title('2D Histogram for H and S channels')
